@@ -1,6 +1,7 @@
 /*works without most functionalities only add and view
 (need to put BAck function while in stuff like during input of a new account)FIXED
-need to includ ea way to get back to main menu once in view accounts
+(need to includ ea way to get back to main menu once in view accounts)fixed
+now to store password in eeprom
 */
 #include <Adafruit_LiquidCrystal.h>
 #include <EEPROM.h>
@@ -260,57 +261,73 @@ void loop() {
 
     if (mode == SITE_LIST) {
 
-        // move to the previous site
+    // move up in the menu
 
-        if (digitalRead(UP_BUTTON) == LOW) {
+    if (digitalRead(UP_BUTTON) == LOW) {
 
-            delay(150);
+        delay(150);
 
-            selectedSite--;
+        selectedSite--;
 
-            if (selectedSite < 0) {
-                selectedSite = siteCount - 1;
-            }
-
-            showSiteList();
-
-            waitForRelease(UP_BUTTON);
+        if (selectedSite < 0) {
+            selectedSite = siteCount;
         }
 
+        showSiteList();
 
-        // move to the next site
+        waitForRelease(UP_BUTTON);
+    }
 
-        if (digitalRead(DOWN_BUTTON) == LOW) {
 
-            delay(150);
+    // move down in the menu
 
-            selectedSite++;
+    if (digitalRead(DOWN_BUTTON) == LOW) {
 
-            if (selectedSite >= siteCount) {
-                selectedSite = 0;
-            }
+        delay(150);
 
-            showSiteList();
+        selectedSite++;
 
-            waitForRelease(DOWN_BUTTON);
+        if (selectedSite > siteCount) {
+            selectedSite = 0;
         }
 
+        showSiteList();
 
-        // open the selected site
+        waitForRelease(DOWN_BUTTON);
+    }
 
-        if (digitalRead(SELECT_BUTTON) == LOW) {
 
-            delay(150);
+    // select the current item
+
+    if (digitalRead(SELECT_BUTTON) == LOW) {
+
+        delay(150);
+
+        // BACK selected
+
+        if (selectedSite == siteCount) {
+
+            mode = MAIN_MENU;
+
+            selectedSite = 0;
+
+            showMainMenu();
+        }
+
+        // account selected
+
+        else {
 
             mode = SITE_DETAILS;
 
             showSiteDetails();
-
-            waitForRelease(SELECT_BUTTON);
         }
 
-        return;
+        waitForRelease(SELECT_BUTTON);
     }
+
+    return;
+}
 
 
     // show the selected site's details
@@ -423,19 +440,25 @@ void showSiteList() {
 
     lcd.setCursor(0, 0);
 
-    lcd.print("SITE ");
-
-    lcd.print(selectedSite + 1);
-
-    lcd.print("/");
-
-    lcd.print(siteCount);
+    if (selectedSite == siteCount) {
+        lcd.print("> BACK");
+    }
+    else {
+        lcd.print("> ");
+        lcd.print(accounts[selectedSite].site);
+    }
 
     lcd.setCursor(0, 1);
 
-    lcd.print("> ");
+    int nextItem = selectedSite + 1;
 
-    lcd.print(accounts[selectedSite].site);
+    if (nextItem == siteCount) {
+        lcd.print("  BACK");
+    }
+    else if (nextItem < siteCount) {
+        lcd.print("  ");
+        lcd.print(accounts[nextItem].site);
+    }
 }
 
 
