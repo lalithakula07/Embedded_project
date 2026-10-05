@@ -1,5 +1,6 @@
 /*works without most functionalities only add and view
-need to put BAck function while in stuff like during input of a new account
+(need to put BAck function while in stuff like during input of a new account)FIXED
+need to includ ea way to get back to main menu once in view accounts
 */
 #include <Adafruit_LiquidCrystal.h>
 #include <EEPROM.h>
@@ -516,7 +517,6 @@ void addSite() {
         return;
     }
 
-
     lcd.clear();
 
     lcd.setCursor(0, 0);
@@ -525,35 +525,98 @@ void addSite() {
     lcd.setCursor(0, 1);
     lcd.print("Check seroutput");
 
-
-    // get the new account details from the serial monitor
-
     Serial.println();
     Serial.println("==============================");
     Serial.println("         add new site");
     Serial.println("==============================");
 
+    // get the site name
+
     Serial.println("Enter site name:");
 
     while (Serial.available() == 0) {
+
+        // check back button
+        if (digitalRead(UP_BUTTON) == LOW) {
+
+            delay(150);
+
+            lcd.clear();
+            lcd.setCursor(0, 0);
+            lcd.print("Cancelled");
+
+            delay(800);
+
+            showMainMenu();
+
+            waitForRelease(UP_BUTTON);
+
+            return;
+        }
+
+        delay(10);
     }
 
     String site = Serial.readStringUntil('\n');
     site.trim();
 
 
+    // get username
+
     Serial.println("Enter username:");
 
     while (Serial.available() == 0) {
+
+        // check back button
+        if (digitalRead(UP_BUTTON) == LOW) {
+
+            delay(150);
+
+            lcd.clear();
+            lcd.setCursor(0, 0);
+            lcd.print("Cancelled");
+
+            delay(800);
+
+            showMainMenu();
+
+            waitForRelease(UP_BUTTON);
+
+            return;
+        }
+
+        delay(10);
     }
 
     String username = Serial.readStringUntil('\n');
     username.trim();
 
 
+    // get password
+
     Serial.println("Enter password:");
 
     while (Serial.available() == 0) {
+
+        // check back button
+        if (digitalRead(UP_BUTTON) == LOW) {
+
+            delay(150);
+
+            lcd.clear();
+            lcd.setCursor(0, 0);
+            lcd.print("Cancelled");
+
+            delay(800);
+
+            showMainMenu();
+
+            waitForRelease(UP_BUTTON);
+
+            return;
+        }
+
+        delay(10);
     }
 
     String password = Serial.readStringUntil('\n');
